@@ -1,14 +1,12 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class PlayerController : MonoBehaviour
+public class PlayerMovement : MonoBehaviour
 {
     
-    public static PlayerController Instance;
+    public static PlayerMovement Instance;
 
     private CharacterController characterController;
-
-    private bool isTopDown = true;
 
     private float moveX;
     private float moveY;
@@ -25,16 +23,8 @@ public class PlayerController : MonoBehaviour
     private void Start()
     {
         moveAction = InputSystem.actions.FindAction("Move");
-        ShiftControls();
     }
-    private void OnEnable()
-    {
-        GameManager.OnPerspectiveShift += ShiftControls;
-    }
-    private void OnDisable()
-    {
-        GameManager.OnPerspectiveShift -= ShiftControls;
-    }
+
 
     void Update()
     {
@@ -46,42 +36,28 @@ public class PlayerController : MonoBehaviour
     {
         Vector2 moveValue = moveAction.ReadValue<Vector2>();
 
-        float horizontalInput = Input.GetAxisRaw("Horizontal");
-        float verticalInput = Input.GetAxisRaw("Vertical");
-
         moveX = moveValue.x * moveSpeed * Time.deltaTime;
         moveY = moveValue.y * moveSpeed * Time.deltaTime;
 
 
     }
-
-    private void OnMove()
-    {
-        
-    }
     private void HandleMovement()
     {
         Vector3 finalMove = new Vector3();
 
-        if (isTopDown)
+        if (GameManager.Instance.currentState == GameManager.PerspectiveState.TopDown)
         {
             finalMove = new Vector3 (moveX, 0, moveY);
-            characterController.Move(finalMove);
-        } else
+        } else 
         {
-            finalMove = new Vector3(moveX, 0, 0);
+            finalMove = new Vector3(0, 0, moveX);
         }
+        characterController.Move(finalMove);
     }
 
     private void HandleJump()
     {
 
     }
-    private void ShiftControls()
-    {
-        if (GameManager.Instance.currentState == GameManager.CameraState.TopDown)
-        {
-            isTopDown = true;
-        } else { isTopDown = false; }
-    }
+
 }

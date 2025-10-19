@@ -10,8 +10,8 @@ public class GameManager : MonoBehaviour
 
     public static event Action OnPerspectiveShift;
 
-    public CameraState currentState = CameraState.TopDown;
-    public enum CameraState
+    public PerspectiveState currentState = PerspectiveState.TopDown;
+    public enum PerspectiveState
     {
         TopDown,
         Side
@@ -25,20 +25,17 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.E))
-        {
-            ShiftPerspective();
-        }
+
     }
 
     public void ShiftPerspective()
     {
-        if (currentState == CameraState.TopDown)
+        if (currentState == PerspectiveState.TopDown)
         {
-            currentState = CameraState.Side;
-        } else if (currentState == CameraState.Side)
+            currentState = PerspectiveState.Side;
+        } else if (currentState == PerspectiveState.Side)
         {
-            currentState = CameraState.TopDown;
+            currentState = PerspectiveState.TopDown;
         }
 
         OnPerspectiveShift?.Invoke();

@@ -30,17 +30,24 @@ public class CameraManager : MonoBehaviour
     }
     void ShiftCamera()
     {
-        if (GameManager.Instance.currentState == GameManager.CameraState.TopDown)
+        if (GameManager.Instance.currentState == GameManager.PerspectiveState.TopDown)
         {
             sideCamera.enabled = false;
             topDownCamera.enabled = true;
             currentCamera = topDownCamera;
+
+            Debug.Log("should shift acmera");
+
         }
         else 
         {
             sideCamera.enabled = true;
             topDownCamera.enabled = false;
             currentCamera = sideCamera;
+
+            Debug.Log("should shift to side vierw");
+
         }
+
     }
 }
