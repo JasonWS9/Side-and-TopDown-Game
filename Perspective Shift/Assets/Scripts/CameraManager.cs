@@ -1,3 +1,4 @@
+using System.Collections;
 using Unity.Cinemachine;
 using UnityEngine;
 
@@ -9,6 +10,12 @@ public class CameraManager : MonoBehaviour
     private CinemachineCamera currentCamera;
 
     public static CameraManager Instance;
+
+    private Camera mainCam;
+
+    [SerializeField] private CinemachineBrain cinemachineBrain;
+
+    private bool canChangeCamera = true;
 
     void Awake()
     {
@@ -22,32 +29,39 @@ public class CameraManager : MonoBehaviour
 
     private void OnEnable()
     {
-        GameManager.OnPerspectiveShift += ShiftCamera;
+        PerspectiveManager.OnPerspectiveShift += ShiftCamera;
     }
     private void OnDisable()
     {
-        GameManager.OnPerspectiveShift -= ShiftCamera;
+        PerspectiveManager.OnPerspectiveShift -= ShiftCamera;
     }
     void ShiftCamera()
     {
-        if (GameManager.Instance.currentState == GameManager.PerspectiveState.TopDown)
+        if (PerspectiveManager.Instance.currentState == PerspectiveManager.PerspectiveState.TopDown)
         {
             sideCamera.enabled = false;
             topDownCamera.enabled = true;
             currentCamera = topDownCamera;
-
-            Debug.Log("should shift acmera");
-
         }
-        else 
+        else
         {
             sideCamera.enabled = true;
             topDownCamera.enabled = false;
             currentCamera = sideCamera;
-
-            Debug.Log("should shift to side vierw");
-
         }
+        StartCoroutine(CheckCameraTransition());
+    }
+    private IEnumerator CheckCameraTransition()
+    {
+        PlayerMovement.Instance.movementEnabled = false;
+        PerspectiveManager.Instance.canChangePerspective = false;
+        yield return null;
+        while (cinemachineBrain.IsBlending)
+        {
+            yield return null;
+        }
+        PlayerMovement.Instance.movementEnabled = true;
+        PerspectiveManager.Instance.canChangePerspective = true;
 
     }
 }
