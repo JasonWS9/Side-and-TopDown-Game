@@ -7,6 +7,7 @@ public class CameraManager : MonoBehaviour
 
     public CinemachineCamera topDownCamera;
     public CinemachineCamera sideCamera;
+   
     private CinemachineCamera currentCamera;
 
     public static CameraManager Instance;
@@ -24,7 +25,11 @@ public class CameraManager : MonoBehaviour
 
     private void Start()
     {
-        ShiftCamera();
+        if (topDownCamera.enabled == false)
+        {
+            ShiftCamera();
+        }
+  
     }
 
     private void OnEnable()
@@ -39,12 +44,15 @@ public class CameraManager : MonoBehaviour
     {
         if (PerspectiveManager.Instance.currentState == PerspectiveManager.PerspectiveState.TopDown)
         {
-            sideCamera.enabled = false;
+            topDownCamera.Lens.ModeOverride = LensSettings.OverrideModes.Orthographic;
             topDownCamera.enabled = true;
+            sideCamera.enabled = false;
             currentCamera = topDownCamera;
         }
         else
         {
+            sideCamera.Lens.ModeOverride = LensSettings.OverrideModes.Perspective;
+
             sideCamera.enabled = true;
             topDownCamera.enabled = false;
             currentCamera = sideCamera;
@@ -63,5 +71,7 @@ public class CameraManager : MonoBehaviour
         PlayerMovement.Instance.movementEnabled = true;
         PerspectiveManager.Instance.canChangePerspective = true;
 
+        sideCamera.Lens.ModeOverride = LensSettings.OverrideModes.Orthographic;
+        topDownCamera.Lens.ModeOverride = LensSettings.OverrideModes.Perspective;
     }
 }
